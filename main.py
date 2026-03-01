@@ -2,7 +2,6 @@ import cv2
 import numpy as np
 import tkinter as tk
 import threading
-import sys
 
 running = False
 cap = None
@@ -14,21 +13,20 @@ def iniciar_camara():
     running = True
     estado_label.config(text="Estado: ACTIVO", fg="green")
 
-    hilo = threading.Thread(target=camara)
+    hilo = threading.Thread(target=camara, daemon=True)
     hilo.start()
 
 def detener_camara():
     global running
     running = False
-    estado_label.config(text="Estado: DETENIDO", fg="red")
 
 def camara():
     global running, cap
 
-    face_cascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
+    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
     mouth_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_smile.xml")
 
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 
     while running:
         ret, frame = cap.read()
@@ -46,7 +44,6 @@ def camara():
             lower_color = hsv[y + int(h*0.5):y + h, x:x + w]
             lower_gray = gray[y + int(h*0.5):y + h, x:x + w]
 
-           
             lower_blue = np.array([90, 50, 50])
             upper_blue = np.array([130, 255, 255])
             mask_blue = cv2.inRange(lower_color, lower_blue, upper_blue)
@@ -61,7 +58,6 @@ def camara():
             mouths = mouth_cascade.detectMultiScale(lower_gray, 1.7, 20)
 
             area = lower_color.shape[0] * lower_color.shape[1]
-
             blue_ratio = blue_pixels / area
             black_ratio = black_pixels / area
 
@@ -93,7 +89,6 @@ def salir():
     global running
     running = False
     liberar_recursos()
-    ventana.quit()
     ventana.destroy()
 
 
@@ -122,5 +117,6 @@ btn_salir = tk.Button(ventana, text="Salir",
                       command=salir, width=25, bg="#e74c3c", fg="white")
 btn_salir.pack(pady=5)
 
-ventana.mainloop()
 ventana.protocol("WM_DELETE_WINDOW", salir)
+
+ventana.mainloop()
