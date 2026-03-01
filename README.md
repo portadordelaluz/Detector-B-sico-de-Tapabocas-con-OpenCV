@@ -23,7 +23,7 @@ en detección facial y análisis de color.
 
 1. Clonar el repositorio:
 
-git clone https://github.com/tuusuario/turepositorio.git
+git clone https://github.com/portadordelaluz/Detector-B-sico-de-Tapabocas-con-OpenCV
 
 2. Entrar a la carpeta del proyecto:
 
